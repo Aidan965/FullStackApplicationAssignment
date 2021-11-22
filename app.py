@@ -98,12 +98,14 @@ def show_all_laureates():
 def show_one_laureate(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         laureate = laureates.find_one( {"_id" : ObjectId(id)} )
-        
+        data = []
+
         if laureate is not None:
             laureate["_id"] = str(laureate["_id"])
             for prize in laureate["prizes"]:
                 prize["_id"] = str(prize["_id"])
-            return make_response(jsonify(laureate), 200)
+            data.append(laureate)
+            return make_response(jsonify(data), 200)
         else:
             return make_response(jsonify( {"error" : "Invalid laureate ID"} ), 404)
     else:
