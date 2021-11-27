@@ -10,7 +10,7 @@ def add_tributes_to_laureates():
         tributes_of_laureates = []
 
         laureates.update_one( 
-            { "id" : laureate["id"]},
+            { "_id" : laureate["_id"]},
             { "$set" : { "tributes" : tributes_of_laureates } }  
         )
 
@@ -27,6 +27,14 @@ def add_object_id_to_prizes_in_laureates_collection():
                 { "$set" : { "prizes.1._id" : ObjectId() } }
             )
 
+def add_media_tag_to_laureate():
+    for laureate in laureates.find():
+
+        laureates.update_one(
+            { "_id" : laureate["_id"]},
+            { "$set" : { "profileImage" : "assets/images/" } }
+        )
 
 # add_tributes_to_laureates()
 # add_object_id_to_prizes_in_laureates_collection()
+# add_media_tag_to_laureate()
