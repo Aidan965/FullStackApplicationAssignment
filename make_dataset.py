@@ -29,10 +29,10 @@ def add_object_id_to_prizes_in_laureates_collection():
 
 def add_media_tag_to_laureate():
     for laureate in laureates.find():
-
+        id = laureate["id"]
         laureates.update_one(
             { "_id" : laureate["_id"]},
-            { "$set" : { "profileImage" : "assets/images/" } }
+            { "$set" : { "profileImage" : "assets/images/" + id + ".jpg"} }
         )
 
 # add_tributes_to_laureates()
