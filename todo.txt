@@ -13,6 +13,7 @@ Add unhappy path tests on Postman
 
 
 
+
 Endpoints to do
 
 Get most decorated universities - got list of university names. Now need to count duplicates, and find top 10 universities

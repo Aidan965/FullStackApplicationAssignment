@@ -336,10 +336,12 @@ def get_nobel_prizes_by_category_and_by_year(category, year):
 def show_nobel_prize(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         prize = prizes.find_one( {"_id" : ObjectId(id)} )
-        
+        data = []
+
         if prize is not None:
             prize["_id"] = str(prize["_id"])
-            return make_response(jsonify(prize), 200)
+            data.append(prize)
+            return make_response(jsonify(data), 200)
         else:
             return make_response(jsonify( {"error" : "Invalid Nobel prize ID"} ), 404)
     else:
