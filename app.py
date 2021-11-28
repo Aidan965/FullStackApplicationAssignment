@@ -297,7 +297,8 @@ def get_nobel_prizes_by_category(category):
         page_size = int(request.args.get('ps'))
     page_start = (page_size * (page_num - 1))
 
-    for prize in prizes.find( { "category" : category}, { "_id" : 0 } ).skip(page_start).limit(page_size):
+    for prize in prizes.find( { "category" : category}).skip(page_start).limit(page_size):
+        prize["_id"] = str(prize["_id"])
         data.append(prize)
     
     if len(data) == 0:
@@ -310,7 +311,8 @@ def get_nobel_prizes_by_category(category):
 def get_nobel_prizes_by_year(year):
     data = []
 
-    for prize in prizes.find( { "year" : year }, { "_id" : 0 } ):
+    for prize in prizes.find( { "year" : year } ):
+        prize["_id"] = str(prize["_id"])
         data.append(prize)
     
     if len(data) == 0:
@@ -323,7 +325,8 @@ def get_nobel_prizes_by_year(year):
 def get_nobel_prizes_by_category_and_by_year(category, year):
     data = []
 
-    for prize in prizes.find( {"category" : category, "year" : year}, {"_id" : 0} ):
+    for prize in prizes.find( {"category" : category, "year" : year} ):
+        prize["_id"] = str(prize["_id"])
         data.append(prize)
 
     if len(data) == 0:
