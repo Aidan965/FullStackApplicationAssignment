@@ -4,6 +4,7 @@ from pymongo import MongoClient
 client = MongoClient("mongodb://127.0.0.1:27017")
 db = client.project
 laureates = db.laureates
+prizes = db.prizes
 
 def add_tributes_to_laureates():
     for laureate in laureates.find():
@@ -39,9 +40,25 @@ def add_media_tag_to_laureate():
         id = laureate["id"]
         laureates.update_one(
             { "_id" : laureate["_id"]},
-            { "$set" : { "profileImage" : "assets/images/" + id + ".jpg"} }
+            { "$set" : { "profileImage" : "assets/images/" + id + ".jpg" } }
         )
+
+
+def add_media_tag_to_prize():
+    for prize in prizes.find():
+        try:
+            for laureate in prize["laureates"]:
+                id = laureate["id"]
+                prizes.update_one(
+                    { "laureates.id" : id },
+                    { "$set" : { "laureates.$.profileImage" : "assets/images/" + id + ".jpg" } }
+                )
+        except:
+            # No prize exists for this year, skipping iteration.
+            continue
+
 
 # add_tributes_to_laureates()
 # add_object_id_to_prizes_in_laureates_collection()
 # add_media_tag_to_laureate()
+# add_media_tag_to_prize()
