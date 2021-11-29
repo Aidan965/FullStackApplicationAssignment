@@ -130,8 +130,10 @@ def get_most_decorated_universities():
 def show_most_decorated_laureates():
     data = []
 
-    for laureate in laureates.find( { "$where" : "this.prizes.length > 1" }, { "_id" : 0, "prizes._id" : 0} ):
-        
+    for laureate in laureates.find( { "$where" : "this.prizes.length > 1" } ):
+        laureate["_id"] = str(laureate["_id"])
+        for prize in laureate["prizes"]:
+            prize["_id"] = str(prize["_id"])
         data.append(laureate)
     
     if len(data) == 0:
@@ -157,8 +159,10 @@ def get_all_laureates_by_country(country_code):
     if all(char in string.ascii_uppercase for char in country_code) and len(country_code) == 2:
         data = []
 
-        for laureate in laureates.find( {"bornCountryCode" : country_code}, {"_id" : 0, "id" : 0, "prizes._id" : 0} ).skip(page_start).limit(page_size):
-            
+        for laureate in laureates.find( {"bornCountryCode" : country_code} ).skip(page_start).limit(page_size):
+            laureate["_id"] = str(laureate["_id"])
+            for prize in laureate["prizes"]:
+                prize["_id"] = str(prize["_id"])
             data.append(laureate)
 
         if len(data) == 0:

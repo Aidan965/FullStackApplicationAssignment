@@ -14,6 +14,7 @@ def add_tributes_to_laureates():
             { "$set" : { "tributes" : tributes_of_laureates } }  
         )
 
+
 def add_object_id_to_prizes_in_laureates_collection():
     for laureate in laureates.find():
         for prize in laureate["prizes"]:
@@ -26,6 +27,12 @@ def add_object_id_to_prizes_in_laureates_collection():
                 { "_id" : laureate["_id"]}, 
                 { "$set" : { "prizes.1._id" : ObjectId() } }
             )
+            if len(laureate["prizes"]) > 2:
+                laureates.update_one(
+                { "_id" : laureate["_id"]}, 
+                { "$set" : { "prizes.2._id" : ObjectId() } }
+            )
+
 
 def add_media_tag_to_laureate():
     for laureate in laureates.find():
