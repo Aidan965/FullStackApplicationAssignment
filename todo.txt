@@ -2,6 +2,7 @@ Add objectId _id to prizes in the laureates collection - DONE :)
 Get Nobel Laureates by University affiliation - DONE :)  (should try improve so it looks for substrings)
 Happy path tests on Postman - DONE :) 
 Get most decorated Nobel laureates - DONE :)
+Get most decorated universities - got list of university names. Now need to count duplicates, and find top 10 universities - DONE :)
 
 
 General improvements to make
@@ -16,6 +17,5 @@ Add unhappy path tests on Postman
 
 Endpoints to do
 
-Get most decorated universities - got list of university names. Now need to count duplicates, and find top 10 universities
 Get list of countries and their number of prizes in descending order
 Edit nobel prize

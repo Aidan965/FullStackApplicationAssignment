@@ -7,6 +7,7 @@ import datetime
 from functools import wraps
 import bcrypt
 from flask_cors import CORS
+from collections import Counter
 
 app = Flask(__name__)
 CORS(app)
@@ -116,13 +117,26 @@ def show_one_laureate(id):
 @app.route("/api/v1/laureates/university", methods=["GET"])
 def get_most_decorated_universities():
     data = []
+    university_frequency = {}
 
     for prize in laureates.find({}, {"prizes.affiliations.name" : 1, "_id" : 0}):
         if len(prize["prizes"][0]["affiliations"][0]) == 0:
             continue
         data.append(prize["prizes"][0]["affiliations"][0]["name"])
 
-    return
+    university_frequency = Counter(data)
+    
+    university_count = university_frequency.most_common()
+
+    data_to_return = []
+    counter = 0
+    for university in university_count:
+        data_to_return.append(university)
+        counter += 1
+        if counter == 10:
+            break
+    
+    return make_response(jsonify(data_to_return), 200)
 
 
 # Get the most decorated Nobel laureates/organisations

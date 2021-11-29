@@ -6,6 +6,7 @@ db = client.project
 laureates = db.laureates
 prizes = db.prizes
 
+
 def add_tributes_to_laureates():
     for laureate in laureates.find():
         tributes_of_laureates = []
