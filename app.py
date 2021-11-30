@@ -114,7 +114,7 @@ def show_one_laureate(id):
 
 
 # Get the most decorated Universities
-@app.route("/api/v1/laureates/university", methods=["GET"])
+@app.route("/api/v1/laureates/universities/top20", methods=["GET"])
 def get_most_decorated_universities():
     data = []
     university_frequency = {}
@@ -124,8 +124,7 @@ def get_most_decorated_universities():
             continue
         data.append(prize["prizes"][0]["affiliations"][0]["name"])
 
-    university_frequency = Counter(data)
-    
+    university_frequency = Counter(data)  
     university_count = university_frequency.most_common()
 
     data_to_return = []
@@ -133,7 +132,7 @@ def get_most_decorated_universities():
     for university in university_count:
         data_to_return.append(university)
         counter += 1
-        if counter == 10:
+        if counter == 20:
             break
     
     return make_response(jsonify(data_to_return), 200)
@@ -188,13 +187,15 @@ def get_all_laureates_by_country(country_code):
 
 
 # Get Nobel laureates by affiliated University
-@app.route("/api/v1/laureates/university/<string:university>", methods=["GET"])
+@app.route("/api/v1/laureates/universities/<string:university>", methods=["GET"])
 def get_all_laureates_affiliated_with_a_university(university):
     
     data = []
 
-    for laureate in laureates.find({"prizes.affiliations.name" : university}, {"_id" : 0, "id" : 0, "prizes._id" : 0}):
-
+    for laureate in laureates.find({"prizes.affiliations.name" : university}):
+        laureate["_id"] = str(laureate["_id"])
+        for prize in laureate["prizes"]:
+            prize["_id"] = str(prize["_id"])
         data.append(laureate)
 
     if len(data) == 0:
