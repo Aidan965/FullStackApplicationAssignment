@@ -206,8 +206,8 @@ def get_all_laureates_affiliated_with_a_university(university):
 
 # Add a new Nobel laureate
 @app.route("/api/v1/laureates", methods=["POST"])
-@jwt_required
-@admin_required
+#@jwt_required
+#@admin_required
 def add_laureate():
     if "firstname" in request.form and "surname" in request.form and "bornCountry" in request.form \
         and "born" in request.form and "died" in request.form and "bornCity" in request.form and "gender" in request.form:
@@ -375,13 +375,36 @@ def show_nobel_prize(id):
 #@jwt_required
 #@admin_required
 def add_nobel_prize_to_laureate(id):
-    if "year" in request.form and "category" in request.form and "motivation" in request.form and "share" in request.form:
+    if "year" in request.form and "category" in request.form and "motivation" in request.form and "share" in request.form \
+        and "name" in request.form and "city" in request.form and "country" in request.form:
         new_nobel_prize = {
             "_id" : ObjectId(),
             "year" : request.form["year"],
             "category" : request.form["category"],
             "motivation" : request.form["motivation"],
-            "share" : request.form["share"]
+            "share" : request.form["share"],
+            "affiliations" : [
+                {
+                    "name" : request.form["name"],
+                    "city" : request.form["city"],
+                    "country" : request.form["country"]
+                }
+            ]
+        }
+
+        # Prizes collection requires different data structure
+        new_nobel_prize_collection = {
+            "_id" : new_nobel_prize["_id"],
+            "year" : request.form["year"],
+            "category" : request.form["category"],       
+            "laureates" : [
+                {
+                    "firstname" : request.form["firstname"],
+                    "surname" : request.form["surname"],
+                    "motivation" : request.form["motivation"],
+                    "share" : request.form["share"]
+                }
+            ]
         }
     else:
         return make_response(jsonify( {"error" : "Missing form data"} ), 404)
@@ -393,7 +416,7 @@ def add_nobel_prize_to_laureate(id):
                 {"_id" : ObjectId(id)},
                 {"$push" : {"prizes" : new_nobel_prize}} 
             )
-            prizes.insert_one(new_nobel_prize)
+            prizes.insert_one(new_nobel_prize_collection)
 
             new_nobel_prize_link = "http://localhost:5000/api/v1/prizes/" + str(new_nobel_prize["_id"])
             return make_response(jsonify( {"url" : new_nobel_prize_link} ), 201)
