@@ -138,6 +138,31 @@ def get_most_decorated_universities():
     return make_response(jsonify(data_to_return), 200)
 
 
+# Get the most decorated countries
+@app.route("/api/v1/laureates/countries/top30", methods=["GET"])
+def get_most_decorated_countries():
+    data = []
+    country_frequency = {}
+
+    for country in laureates.find({}, { "bornCountryCode" : 1, "_id" : 0 }):
+        try:                
+            data.append(country["bornCountryCode"])
+        except: 
+            print("No country code found")
+
+    country_frequency = Counter(data)  
+    country_count = country_frequency.most_common()
+
+    data_to_return = []
+    counter = 0
+    for country in country_count:
+        data_to_return.append(country)
+        counter += 1
+        if counter == 30:
+            break
+    
+    return make_response(jsonify(data_to_return), 200)
+
 # Get the most decorated Nobel laureates/organisations
 @app.route("/api/v1/laureates/highly_decorated", methods=["GET"])
 def show_most_decorated_laureates():
@@ -232,8 +257,8 @@ def add_laureate():
 
 # Edit an existing Nobel laureate
 @app.route("/api/v1/laureates/<string:id>", methods=["PUT"])
-@jwt_required
-@admin_required
+# @jwt_required
+#@admin_required
 def edit_laureate(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         if "firstname" in request.form and "surname" in request.form and "bornCountry" in request.form \
@@ -266,8 +291,8 @@ def edit_laureate(id):
 
 # Delete a Nobel Laureate
 @app.route("/api/v1/laureates/<string:id>", methods=["DELETE"])
-@jwt_required
-@admin_required
+# @jwt_required
+# @admin_required
 def delete_laureate(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         result = laureates.delete_one( {"_id" : ObjectId(id) } )
@@ -428,8 +453,8 @@ def add_nobel_prize_to_laureate(id):
 
 # Delete Nobel prize
 @app.route("/api/v1/prizes/<string:id>", methods=["DELETE"])
-@jwt_required
-@admin_required
+# @jwt_required
+# @admin_required
 def delete_nobel_prize(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         prize = prizes.find_one( { "_id" : ObjectId(id) } )
