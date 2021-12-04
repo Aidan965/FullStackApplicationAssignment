@@ -261,20 +261,14 @@ def add_laureate():
 #@admin_required
 def edit_laureate(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
-        if "firstname" in request.form and "surname" in request.form and "bornCountry" in request.form \
-        and "born" in request.form and "died" in request.form and "bornCity" in request.form and "gender" in request.form:
+        if "firstname" in request.form and "surname" in request.form:
 
             result = laureates.update_one(
                 {"_id" : ObjectId(id)},
                 {
                     "$set" : {
                         "firstname" : request.form["firstname"],
-                        "surname" : request.form["surname"],
-                        "bornCountry" : request.form["bornCountry"],
-                        "born" : request.form["born"],
-                        "died" : request.form["died"],
-                        "bornCity" : request.form["bornCity"],
-                        "gender" : request.form["gender"],
+                        "surname" : request.form["surname"]
                     }
                 })
             
@@ -427,7 +421,8 @@ def add_nobel_prize_to_laureate(id):
                     "firstname" : request.form["firstname"],
                     "surname" : request.form["surname"],
                     "motivation" : request.form["motivation"],
-                    "share" : request.form["share"]
+                    "share" : request.form["share"],
+                    "profileImage" : request.form["image"]
                 }
             ]
         }
@@ -441,6 +436,7 @@ def add_nobel_prize_to_laureate(id):
                 {"_id" : ObjectId(id)},
                 {"$push" : {"prizes" : new_nobel_prize}} 
             )
+            # TODO if prize already contains laureate call new method to add laureate to prize
             prizes.insert_one(new_nobel_prize_collection)
 
             new_nobel_prize_link = "http://localhost:5000/api/v1/prizes/" + str(new_nobel_prize["_id"])
