@@ -181,7 +181,7 @@ def show_most_decorated_laureates():
 
 
 # Get Nobel laureates by country code
-@app.route("/api/v1/laureates/country/<string:country_code>", methods=["GET"])
+@app.route("/api/v1/laureates/countries/<string:country_code>", methods=["GET"])
 def get_all_laureates_by_country(country_code):
     
     country_code = country_code.upper()
@@ -443,6 +443,37 @@ def add_nobel_prize_to_laureate(id):
             return make_response(jsonify( {"url" : new_nobel_prize_link} ), 201)
         else:
             return make_response(jsonify( {"error" : "Invalid laureate ID"} ), 404)
+    else:
+        return make_response(jsonify( {"error" : "ID should be 24 characters long or contains illegal characters"} ), 400)
+
+
+# Edit Nobel prize
+@app.route("/api/v1/prizes/<string:id>", methods=["PUT"])
+# @jwt_required
+# @admin_required
+def update_nobel_prize(id):
+    if "motivation" in request.form:
+        edited_prize = {
+            "laureates": [
+                {
+                    "motivation" : request.form["motivation"]
+                }
+            ]
+        }
+    else:
+        return make_response(jsonify( {"error" : "Missing form data"} ), 404)
+  
+    if all(char in string.hexdigits for char in id) and len(id) == 24:
+        prize = prizes.find_one( { "_id" : ObjectId(id) } )
+
+        if prize is None:
+            return make_response(jsonify( {"error" : "bad prize ID"} ), 404)
+        
+        prizes.update_one( {"_id" : ObjectId(id) }, {"$set" : edited_prize})
+        edited_prize_url = "http://localhost:5000/api/v1/prizes/" + id
+        
+        return make_response(jsonify( {"url" : edited_prize_url} ), 200)
+    
     else:
         return make_response(jsonify( {"error" : "ID should be 24 characters long or contains illegal characters"} ), 400)
 
