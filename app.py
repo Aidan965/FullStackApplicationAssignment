@@ -485,11 +485,17 @@ def update_nobel_prize(id):
 def delete_nobel_prize(id):
     if all(char in string.hexdigits for char in id) and len(id) == 24:
         prize = prizes.find_one( { "_id" : ObjectId(id) } )
+        prize_attached_to_laureate = laureates.find_one( {"prizes._id" : ObjectId(id)} )
 
         if prize is None and prize is None:
             return make_response(jsonify({"error" : "bad Nobel prize ID"}), 404)
 
         prizes.delete_one( { "_id" : ObjectId(id) } )
+
+        laureates.update_one( 
+            { "prizes._id" : ObjectId(id) },
+            { "$pull" : { "prizes" :  { "_id" : ObjectId(id) } } }
+        )
         return make_response(jsonify({}), 204)
     else:
         return make_response(jsonify({ "error" : "ID is not 24 characters long or contains invalid characters"}), 400)
