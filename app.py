@@ -436,8 +436,16 @@ def add_nobel_prize_to_laureate(id):
                 {"_id" : ObjectId(id)},
                 {"$push" : {"prizes" : new_nobel_prize}} 
             )
-            # TODO if prize already contains laureate call new method to add laureate to prize
-            prizes.insert_one(new_nobel_prize_collection)
+
+            prize_exists = prizes.find_one( {"_id" : ObjectId(new_nobel_prize_collection["_id"])} )
+
+            if prize_exists is None:       
+                prizes.insert_one(new_nobel_prize_collection)
+            else:
+                prizes.update_one(
+                    {"_id" : ObjectId(new_nobel_prize_collection["_id"])},
+                    {"$push" : {"laureates" : new_nobel_prize_collection}}
+                )
 
             new_nobel_prize_link = "http://localhost:5000/api/v1/prizes/" + str(new_nobel_prize["_id"])
             return make_response(jsonify( {"url" : new_nobel_prize_link} ), 201)
