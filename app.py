@@ -120,9 +120,12 @@ def get_most_decorated_universities():
     university_frequency = {}
 
     for prize in laureates.find({}, {"prizes.affiliations.name" : 1, "_id" : 0}):
-        if len(prize["prizes"][0]["affiliations"][0]) == 0:
+        try:
+            university_name = prize["prizes"][0]["affiliations"][0]["name"]
+        except:
+            # No affiliated organisation/university found, skipping iteration.
             continue
-        data.append(prize["prizes"][0]["affiliations"][0]["name"])
+        data.append(university_name)
 
     university_frequency = Counter(data)  
     university_count = university_frequency.most_common()
@@ -148,7 +151,8 @@ def get_most_decorated_countries():
         try:                
             data.append(country["bornCountryCode"])
         except: 
-            print("No country code found")
+            # No country code found, skipping iteration.
+            continue
 
     country_frequency = Counter(data)  
     country_count = country_frequency.most_common()
@@ -211,6 +215,26 @@ def get_all_laureates_by_country(country_code):
         return make_response(jsonify( {"error" : "Country code should be only two letters long and contain only letters"} ), 400)
 
 
+# Get Nobel laureates by name
+@app.route("/api/v1/laureates/search/<string:search>", methods=["GET"])
+def get_nobel_laureates_by_search(search):
+    data = []
+    
+    if len(search) > 0:
+        for laureate in laureates.find( { "$text" : { "$search" : search } } ):
+            laureate["_id"] = str(laureate["_id"])
+            for prize in laureate["prizes"]:
+                prize["_id"] = str(prize["_id"])
+            data.append(laureate)
+        
+        if len(data) == 0:
+            return make_response(jsonify( {"error" : "No search results found"} ), 404)
+
+        return make_response(jsonify(data), 200)
+    else:
+        return make_response(jsonify( {"error" : "No input search term"} ), 400)
+        
+
 # Get Nobel laureates by affiliated University
 @app.route("/api/v1/laureates/universities/<string:university>", methods=["GET"])
 def get_all_laureates_affiliated_with_a_university(university):
@@ -268,7 +292,7 @@ def edit_laureate(id):
                 {
                     "$set" : {
                         "firstname" : request.form["firstname"],
-                        "surname" : request.form["surname"]
+                        "surname" : request.form["surname"],
                     }
                 })
             
