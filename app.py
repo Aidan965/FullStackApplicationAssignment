@@ -266,8 +266,10 @@ def add_laureate():
             "born": request.form["born"],
             "died": request.form["died"],
             "bornCountry": request.form["bornCountry"],
+            "bornCountryCode" : request.form["bornCountryCode"],
             "bornCity": request.form["bornCity"],
             "gender": request.form["gender"],
+            "profileImage": request.form["profileImage"],
             "prizes": []
         }
 
@@ -293,6 +295,11 @@ def edit_laureate(id):
                     "$set" : {
                         "firstname" : request.form["firstname"],
                         "surname" : request.form["surname"],
+                        "born" : request.form["born"],
+                        "died" : request.form["died"],
+                        "bornCountry" : request.form["bornCountry"],
+                        "bornCountryCode" : request.form["bornCountryCode"],
+                        "profileImage" : request.form["profileImage"]
                     }
                 })
             
