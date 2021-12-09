@@ -18,7 +18,6 @@ db = client.project
 
 laureates = db.laureates
 prizes = db.prizes
-countries = db.countries
 blacklist = db.blacklist
 staff = db.staff
 
