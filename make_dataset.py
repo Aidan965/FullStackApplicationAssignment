@@ -60,9 +60,13 @@ def add_media_tag_to_prize():
 
 
 def add_text_index_to_laureate_name():
-    laureates.create_index({"firstname" : "text", "surname" : "text"})
+    laureates.create_index(
+        [
+            ("firstname", "text"), 
+            ("surname", "text")
+        ]
+    )
 
-# add_tributes_to_laureates()
 # add_object_id_to_prizes_in_laureates_collection()
 # add_media_tag_to_laureate()
 # add_media_tag_to_prize()
