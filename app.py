@@ -452,7 +452,7 @@ def add_nobel_prize_to_laureate(id):
                     "surname" : request.form["surname"],
                     "motivation" : request.form["motivation"],
                     "share" : request.form["share"],
-                    "profileImage" : request.form["image"]
+                    "profileImage" : request.form["profileImage"]
                 }
             ]
         }
